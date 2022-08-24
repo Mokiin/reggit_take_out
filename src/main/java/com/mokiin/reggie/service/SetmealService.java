@@ -4,6 +4,8 @@ import com.mokiin.reggie.dto.SetmealDto;
 import com.mokiin.reggie.pojo.Setmeal;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 套餐 服务类
@@ -19,4 +21,16 @@ public interface SetmealService extends IService<Setmeal> {
      * @param setmealDto
      */
     void saveWithDish(SetmealDto setmealDto);
+
+    /**
+     * 删除一个或多个套餐
+     * @param ids
+     */
+    void removeWithDish(List<Long> ids);
+
+    /**
+     * 启用或者停用
+     * @param id
+     */
+    void updateStatus(Long id);
 }

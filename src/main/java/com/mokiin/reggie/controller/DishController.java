@@ -7,6 +7,7 @@ import com.mokiin.reggie.conmmon.Result;
 import com.mokiin.reggie.dto.DishDto;
 import com.mokiin.reggie.pojo.Category;
 import com.mokiin.reggie.pojo.Dish;
+import com.mokiin.reggie.pojo.DishFlavor;
 import com.mokiin.reggie.service.CategoryService;
 import com.mokiin.reggie.service.DishFlavorService;
 import com.mokiin.reggie.service.DishService;
@@ -105,6 +106,7 @@ public class DishController {
 
     /**
      * 更新菜品并更新口味信息
+     *
      * @param dishDto
      * @return
      */
@@ -116,17 +118,31 @@ public class DishController {
 
     /**
      * 查询菜品数据
+     *
      * @return
      */
     @GetMapping("/list")
     public Result list(Dish dish) {
         LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(null != dish.getCategoryId(),Dish::getCategoryId,dish.getCategoryId());
+        wrapper.eq(null != dish.getCategoryId(), Dish::getCategoryId, dish.getCategoryId());
         // 状态为1表示售卖中
-        wrapper.eq(Dish::getStatus,1);
+        wrapper.eq(Dish::getStatus, 1);
         wrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
-        List<Dish> list = dishService.list(wrapper);
-        return Result.ok(list);
+        List<Dish> dishs = dishService.list(wrapper);
+        List<DishDto> dishDtos = dishs.stream().map(item -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item, dishDto);
+            Category category = categoryService.getById(item.getCategoryId());
+            if (category != null) {
+                dishDto.setCategoryName(category.getName());
+            }
+            LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(DishFlavor::getDishId, item.getId());
+            dishDto.setFlavors(dishFlavorService.list(queryWrapper));
+            return dishDto;
+        }).collect(Collectors.toList());
+        return Result.ok(dishDtos);
+
     }
 
 }

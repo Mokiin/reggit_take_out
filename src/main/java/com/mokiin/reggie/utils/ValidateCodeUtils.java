@@ -1,4 +1,4 @@
-package com.itheima.reggie.common;
+package com.mokiin.reggie.utils;
 
 import java.util.Random;
 
