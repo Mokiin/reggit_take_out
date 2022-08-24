@@ -1,6 +1,12 @@
 server:
   port: 8080
 spring:
+  redis:
+    host: 43.142.21.155
+    port: 6379
+    password: 1679258
+    database: 0
+
   application:
     name: reggie_take_out
   datasource:
@@ -19,4 +25,4 @@ mybatis-plus:
       id-type: ASSIGN_ID
 
 reggie:
-  path: D:\test
+  path: D:\test\
